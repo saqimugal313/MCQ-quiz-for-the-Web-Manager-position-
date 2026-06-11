@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Web Manager MCQ — DHO Islamabad</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;min-height:100vh;}
+
+  /* ── TOP HEADER ── */
+  .top-bar{background:#1a3a5c;padding:0 0 0 0;}
+  .header-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:3px solid #0d9e75;}
+  .logo-area{display:flex;align-items:center;gap:14px;}
+  .logo-circle{width:52px;height:52px;border-radius:50%;background:#0d9e75;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#fff;flex-shrink:0;border:2px solid rgba(255,255,255,0.3);}
+  .org-info h1{font-size:17px;font-weight:700;color:#fff;line-height:1.2;}
+  .org-info p{font-size:11px;color:#90b8d4;margin-top:2px;letter-spacing:0.03em;}
+  .header-right{text-align:right;}
+  .exam-tag{background:#0d9e75;color:#fff;font-size:11px;font-weight:600;padding:4px 10px;border-radius:4px;letter-spacing:0.05em;text-transform:uppercase;}
+
+  /* ── INFO BAR ── */
+  .info-bar{background:#163050;display:flex;gap:0;border-bottom:1px solid #1e4a6e;}
+  .info-item{flex:1;padding:8px 20px;border-right:1px solid #1e4a6e;display:flex;flex-direction:column;}
+  .info-item:last-child{border-right:none;}
+  .info-label{font-size:10px;color:#6ea4c8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:2px;}
+  .info-value{font-size:13px;color:#e8f0f8;font-weight:500;}
+
+  /* ── TIMER ── */
+  .timer-bar{background:#0d2540;padding:6px 24px;display:flex;align-items:center;justify-content:space-between;}
+  .timer-label{font-size:12px;color:#6ea4c8;letter-spacing:0.04em;}
+  .timer-display{font-size:22px;font-weight:700;color:#fff;font-family:'Courier New',monospace;letter-spacing:0.1em;}
+  .timer-display.warn{color:#f5a623;}
+  .timer-display.danger{color:#e74c3c;animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
+  .progress-wrap{flex:1;margin:0 20px;background:#163050;border-radius:4px;height:6px;overflow:hidden;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,#0d9e75,#1abc9c);border-radius:4px;transition:width 0.4s ease;}
+
+  /* ── MAIN LAYOUT ── */
+  .main{display:flex;gap:0;padding:20px;max-width:1280px;margin:0 auto;}
+
+  /* ── SIDEBAR ── */
+  .sidebar{width:260px;flex-shrink:0;}
+  .sidebar-card{background:#fff;border-radius:8px;border:1px solid #d5e3ef;overflow:hidden;margin-bottom:16px;}
+  .sidebar-title{background:#1a3a5c;color:#fff;font-size:12px;font-weight:600;padding:8px 14px;letter-spacing:0.05em;text-transform:uppercase;}
+  .q-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:12px;}
+  .q-dot{width:100%;aspect-ratio:1;border-radius:5px;border:1px solid #d0dde8;background:#f7f9fb;font-size:11px;font-weight:600;color:#5a7a96;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+  .q-dot:hover{background:#e8f0f8;border-color:#6ea4c8;}
+  .q-dot.current{background:#1a3a5c;color:#fff;border-color:#1a3a5c;}
+  .q-dot.correct{background:#e6f5ef;color:#0d7a58;border-color:#0d9e75;}
+  .q-dot.wrong{background:#fde8e8;color:#c0392b;border-color:#e74c3c;}
+  .legend{padding:0 12px 12px;display:flex;flex-direction:column;gap:5px;}
+  .leg-row{display:flex;align-items:center;gap:8px;font-size:12px;color:#5a7a96;}
+  .leg-box{width:14px;height:14px;border-radius:3px;flex-shrink:0;}
+  .leg-box.unanswered{background:#f7f9fb;border:1px solid #d0dde8;}
+  .leg-box.correct-l{background:#e6f5ef;border:1px solid #0d9e75;}
+  .leg-box.wrong-l{background:#fde8e8;border:1px solid #e74c3c;}
+  .leg-box.current-l{background:#1a3a5c;border:1px solid #1a3a5c;}
+
+  /* score card */
+  .score-card{padding:14px;}
+  .score-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #edf2f7;font-size:13px;color:#5a7a96;}
+  .score-row:last-child{border-bottom:none;}
+  .score-val{font-weight:700;font-size:14px;color:#1a3a5c;}
+  .score-val.green{color:#0d9e75;}
+  .score-val.red{color:#e74c3c;}
+  .score-val.blue{color:#2980b9;}
+
+  /* ── QUESTION AREA ── */
+  .q-area{flex:1;min-width:0;}
+  .q-card{background:#fff;border-radius:8px;border:1px solid #d5e3ef;padding:24px 28px;margin-bottom:16px;}
+  .q-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  .q-number-badge{background:#1a3a5c;color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;flex-shrink:0;}
+  .diff-pill{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+  .diff-pill.easy{background:#e6f5ef;color:#0d7a58;}
+  .diff-pill.medium{background:#fef3e2;color:#b7580d;}
+  .diff-pill.hard{background:#fde8e8;color:#c0392b;}
+  .topic-pill{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;background:#eef3f9;color:#2c5f8a;}
+  .q-text{font-size:16px;color:#1a2d40;line-height:1.65;font-weight:500;margin-bottom:20px;}
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:7px;border:1.5px solid #d5e3ef;cursor:pointer;transition:all 0.15s;background:#fafcff;}
+  .opt:hover:not(.locked){background:#eef3f9;border-color:#6ea4c8;}
+  .opt-letter{width:32px;height:32px;border-radius:50%;background:#edf2f8;border:1.5px solid #c8d8ea;font-size:13px;font-weight:700;color:#3a6080;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;}
+  .opt-text{font-size:14px;color:#2d4a62;line-height:1.4;flex:1;}
+  .opt.correct{background:#e6f5ef;border-color:#0d9e75;}
+  .opt.correct .opt-letter{background:#0d9e75;border-color:#0d9e75;color:#fff;}
+  .opt.correct .opt-text{color:#0a6644;font-weight:600;}
+  .opt.wrong{background:#fde8e8;border-color:#e74c3c;}
+  .opt.wrong .opt-letter{background:#e74c3c;border-color:#e74c3c;color:#fff;}
+  .opt.wrong .opt-text{color:#c0392b;font-weight:600;}
+  .opt.reveal{background:#e6f5ef;border-color:#0d9e75;}
+  .opt.reveal .opt-letter{background:#0d9e75;border-color:#0d9e75;color:#fff;}
+  .opt.reveal .opt-text{color:#0a6644;font-weight:600;}
+  .feedback{margin-top:14px;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;}
+  .feedback.ok{background:#e6f5ef;color:#0a6644;border:1px solid #a8ddcb;}
+  .feedback.err{background:#fde8e8;color:#a93226;border:1px solid #f1a9a0;}
+  .feedback .icon{font-size:16px;}
+
+  /* navigation */
+  .nav-row{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+  .btn-nav{padding:10px 24px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid;transition:all 0.15s;}
+  .btn-prev{background:#fff;border-color:#c8d8ea;color:#3a6080;}
+  .btn-prev:hover{background:#eef3f9;}
+  .btn-next{background:#1a3a5c;border-color:#1a3a5c;color:#fff;}
+  .btn-next:hover{background:#163050;}
+  .btn-submit{background:#0d9e75;border-color:#0d9e75;color:#fff;padding:10px 28px;}
+  .btn-submit:hover{background:#0a8562;}
+  .btn-nav:disabled{opacity:0.4;cursor:not-allowed;}
+  .q-counter{font-size:13px;color:#5a7a96;}
+  .q-counter strong{color:#1a3a5c;}
+
+  /* ── RESULT OVERLAY ── */
+  .overlay{display:none;position:fixed;inset:0;background:rgba(10,25,45,0.75);z-index:999;align-items:center;justify-content:center;}
+  .overlay.active{display:flex;}
+  .result-modal{background:#fff;border-radius:12px;max-width:520px;width:90%;padding:0;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+  .modal-header{background:#1a3a5c;padding:20px 28px;text-align:center;}
+  .modal-header h2{color:#fff;font-size:20px;font-weight:700;}
+  .modal-header p{color:#90b8d4;font-size:12px;margin-top:4px;}
+  .modal-body{padding:28px;}
+  .score-big{text-align:center;margin-bottom:24px;}
+  .score-circle{width:110px;height:110px;border-radius:50%;margin:0 auto 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;border:5px solid;}
+  .score-pct{font-size:28px;line-height:1;}
+  .score-lbl{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;}
+  .grade-row{text-align:center;font-size:16px;font-weight:600;margin-bottom:20px;}
+  .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+  .r-stat{background:#f7f9fb;border-radius:8px;padding:14px;text-align:center;border:1px solid #e0eaf4;}
+  .r-stat .val{font-size:24px;font-weight:700;color:#1a3a5c;}
+  .r-stat .lbl{font-size:11px;color:#7a94aa;text-transform:uppercase;letter-spacing:0.05em;margin-top:4px;}
+  .r-stat .val.green{color:#0d9e75;}
+  .r-stat .val.red{color:#e74c3c;}
+  .btn-retry{display:block;width:100%;padding:13px;background:#1a3a5c;color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;text-align:center;}
+  .btn-retry:hover{background:#163050;}
+  .btn-print{display:block;width:100%;padding:13px;background:#fff;color:#1a3a5c;border:1.5px solid #c8d8ea;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;margin-top:10px;}
+  .btn-print:hover{background:#eef3f9;}
+
+  /* ── FOOTER ── */
+  .footer{background:#1a3a5c;color:#6ea4c8;text-align:center;padding:12px;font-size:11px;margin-top:20px;}
+  .footer span{color:#90b8d4;}
+
+  @media(max-width:768px){
+    .main{flex-direction:column;padding:12px;}
+    .sidebar{width:100%;}
+    .info-bar{flex-wrap:wrap;}
+    .info-item{min-width:50%;}
+    .header-inner{flex-wrap:wrap;gap:10px;}
+  }
+  @media print{
+    .top-bar,.info-bar,.timer-bar,.nav-row,.sidebar,.footer{display:none!important;}
+    .main{padding:0;}
+    .q-card{page-break-inside:avoid;box-shadow:none;border:1px solid #ccc;margin-bottom:10px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP HEADER -->
+<div class="top-bar">
+  <div class="header-inner">
+    <div class="logo-area">
+      <div class="logo-circle">DHO</div>
+      <div class="org-info">
+        <h1>District Health Office — Islamabad</h1>
+        <p>Strengthening of Drug Control Section · Government of Pakistan</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="exam-tag">Online Assessment</div>
+      <p style="color:#6ea4c8;font-size:11px;margin-top:5px;">PPS-7 · Web Manager</p>
+    </div>
+  </div>
+  <div class="info-bar">
+    <div class="info-item"><span class="info-label">Post</span><span class="info-value">Web Manager</span></div>
+    <div class="info-item"><span class="info-label">Grade</span><span class="info-value">PPS-7</span></div>
+    <div class="info-item"><span class="info-label">Total Questions</span><span class="info-value">50 MCQs</span></div>
+    <div class="info-item"><span class="info-label">Total Marks</span><span class="info-value">50</span></div>
+    <div class="info-item"><span class="info-label">Duration</span><span class="info-value">60 Minutes</span></div>
+    <div class="info-item"><span class="info-label">Pass Marks</span><span class="info-value">30 / 50</span></div>
+  </div>
+</div>
+
+<!-- TIMER BAR -->
+<div class="timer-bar">
+  <span class="timer-label">⏱ TIME REMAINING</span>
+  <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:100%"></div></div>
+  <span class="timer-display" id="timerDisplay">60:00</span>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">Question Navigator</div>
+      <div class="q-grid" id="qGrid"></div>
+      <div class="legend">
+        <div class="leg-row"><div class="leg-box unanswered"></div>Not Attempted</div>
+        <div class="leg-row"><div class="leg-box current-l"></div>Current</div>
+        <div class="leg-row"><div class="leg-box correct-l"></div>Correct</div>
+        <div class="leg-row"><div class="leg-box wrong-l"></div>Incorrect</div>
+      </div>
+    </div>
+    <div class="sidebar-card">
+      <div class="sidebar-title">Live Score</div>
+      <div class="score-card">
+        <div class="score-row">Attempted <span class="score-val blue" id="s-att">0 / 50</span></div>
+        <div class="score-row">Correct <span class="score-val green" id="s-cor">0</span></div>
+        <div class="score-row">Incorrect <span class="score-val red" id="s-wrg">0</span></div>
+        <div class="score-row">Not Attempted <span class="score-val" id="s-rem">50</span></div>
+        <div class="score-row">Score % <span class="score-val blue" id="s-pct">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUESTION AREA -->
+  <div class="q-area">
+    <div class="q-card" id="qCard">
+      <!-- injected by JS -->
+    </div>
+    <div class="nav-row">
+      <button class="btn-nav btn-prev" id="btnPrev" onclick="navigate(-1)" disabled>◀ Previous</button>
+      <span class="q-counter">Question <strong id="qPos">1</strong> of <strong>50</strong></span>
+      <button class="btn-nav btn-next" id="btnNext" onclick="navigate(1)">Next ▶</button>
+      <button class="btn-nav btn-submit" onclick="showResult()">Submit Exam</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT MODAL -->
+<div class="overlay" id="overlay">
+  <div class="result-modal">
+    <div class="modal-header">
+      <h2>Exam Result</h2>
+      <p>Web Manager · DHO Islamabad · PPS-7</p>
+    </div>
+    <div class="modal-body">
+      <div class="score-big">
+        <div class="score-circle" id="scoreCircle">
+          <span class="score-pct" id="scorePct">0%</span>
+          <span class="score-lbl">Score</span>
+        </div>
+        <div class="grade-row" id="gradeRow"></div>
+      </div>
+      <div class="result-grid">
+        <div class="r-stat"><div class="val green" id="r-cor">0</div><div class="lbl">Correct</div></div>
+        <div class="r-stat"><div class="val red" id="r-wrg">0</div><div class="lbl">Incorrect</div></div>
+        <div class="r-stat"><div class="val" id="r-rem">0</div><div class="lbl">Not Attempted</div></div>
+        <div class="r-stat"><div class="val blue" id="r-marks">0 / 50</div><div class="lbl">Total Marks</div></div>
+      </div>
+      <button class="btn-retry" onclick="resetExam()">🔁 Retry Exam</button>
+      <button class="btn-print" onclick="window.print()">🖨️ Print Questions</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>District Health Office Islamabad</span> · Web Manager Assessment · PPS-7 · Strengthening of Drug Control Section
+</div>
+
+<script>
+const qs=[
+  {q:"What does HTML stand for?",opts:["Hyper Text Markup Language","High Tech Modern Language","Hyper Transfer Markup Language","Home Tool Markup Language"],ans:0,diff:"easy",topic:"HTML"},
+  {q:"Which HTML tag is used to create a hyperlink?",opts:["&lt;link&gt;","&lt;a&gt;","&lt;href&gt;","&lt;url&gt;"],ans:1,diff:"easy",topic:"HTML"},
+  {q:"What does CSS stand for?",opts:["Creative Style Sheets","Computer Style Sheets","Cascading Style Sheets","Colorful Style Sheets"],ans:2,diff:"easy",topic:"CSS"},
+  {q:"Which CSS property changes the color of text?",opts:["font-color","text-color","color","foreground-color"],ans:2,diff:"easy",topic:"CSS"},
+  {q:"Which HTML element defines the title of a document shown in the browser tab?",opts:["&lt;meta&gt;","&lt;head&gt;","&lt;title&gt;","&lt;header&gt;"],ans:2,diff:"easy",topic:"HTML"},
+  {q:"Which CSS property makes text bold?",opts:["font-style: bold","font-weight: bold","text-weight: bold","font-bold: true"],ans:1,diff:"easy",topic:"CSS"},
+  {q:"Which HTML tag defines an unordered list?",opts:["&lt;ol&gt;","&lt;ul&gt;","&lt;li&gt;","&lt;list&gt;"],ans:1,diff:"easy",topic:"HTML"},
+  {q:"Which HTML attribute provides alternate text for an image?",opts:["title","src","alt","href"],ans:2,diff:"easy",topic:"HTML"},
+  {q:"What does DOM stand for?",opts:["Document Object Model","Data Object Management","Document Oriented Module","Desktop Object Model"],ans:0,diff:"medium",topic:"JavaScript"},
+  {q:"Which JavaScript method adds an element to the end of an array?",opts:["append()","push()","add()","insert()"],ans:1,diff:"medium",topic:"JavaScript"},
+  {q:"What does JSON stand for?",opts:["JavaScript Object Notation","Java Standard Object Notation","JavaScript Oriented Naming","Java Script Online Notation"],ans:0,diff:"easy",topic:"JavaScript"},
+  {q:"What does `typeof null` return in JavaScript?",opts:['"null"','"undefined"','"object"','"string"'],ans:2,diff:"hard",topic:"JavaScript"},
+  {q:"Which keyword declares a block-scoped variable in modern JavaScript?",opts:["var","variable","let","dim"],ans:2,diff:"medium",topic:"JavaScript"},
+  {q:"What does HTTP stand for?",opts:["Hyper Text Transfer Protocol","High Transfer Text Protocol","Hyper Text Transport Program","Home Transfer Text Protocol"],ans:0,diff:"easy",topic:"Networking"},
+  {q:"Which protocol is used for secure data transfer over the web?",opts:["FTP","HTTP","HTTPS","SMTP"],ans:2,diff:"easy",topic:"Networking"},
+  {q:"What does DNS stand for?",opts:["Data Network System","Domain Name System","Digital Network Server","Dynamic Name Service"],ans:1,diff:"easy",topic:"Networking"},
+  {q:"Which default port number does HTTP use?",opts:["21","25","80","443"],ans:2,diff:"medium",topic:"Networking"},
+  {q:"What is an IP address?",opts:["A unique identifier for a network device","An internet browser program","A type of web browser","A programming language"],ans:0,diff:"easy",topic:"Networking"},
+  {q:"What does SQL stand for?",opts:["Structured Query Language","Simple Query Language","Standard Query Logic","System Query Language"],ans:0,diff:"easy",topic:"Database"},
+  {q:"Which SQL command retrieves data from a table?",opts:["GET","FETCH","SELECT","PULL"],ans:2,diff:"easy",topic:"Database"},
+  {q:"What is a primary key in a database?",opts:["A key to lock the database","A unique identifier for each record","The first column of any table","A foreign reference key"],ans:1,diff:"easy",topic:"Database"},
+  {q:"Which SQL clause filters records based on a condition?",opts:["ORDER BY","GROUP BY","WHERE","HAVING"],ans:2,diff:"easy",topic:"Database"},
+  {q:"What does DBMS stand for?",opts:["Database Management System","Digital Base Module System","Data Binary Management Software","Database Module Software"],ans:0,diff:"easy",topic:"Database"},
+  {q:"What does CMS stand for?",opts:["Computer Management System","Content Management System","Central Module Server","Content Module Software"],ans:1,diff:"easy",topic:"Web Concepts"},
+  {q:"Which of these is a widely used open-source CMS?",opts:["Django","WordPress","Laravel","Bootstrap"],ans:1,diff:"easy",topic:"Web Concepts"},
+  {q:"What does URL stand for?",opts:["Uniform Resource Locator","Universal Resource Link","Uniform Reference Location","Unique Resource Locator"],ans:0,diff:"easy",topic:"Web Concepts"},
+  {q:"What is responsive web design?",opts:["Design that responds to user clicks","Design that adapts to different screen sizes","Design with fast load times","Design with animations only"],ans:1,diff:"easy",topic:"Web Concepts"},
+  {q:"What does SEO stand for?",opts:["Server Engine Optimization","Search Engine Optimization","Site Engagement Output","Software Engineering Operations"],ans:1,diff:"easy",topic:"Web Concepts"},
+  {q:"What does SSL stand for?",opts:["Secure Socket Layer","Simple Security Layer","System Security Logic","Secure Server Link"],ans:0,diff:"medium",topic:"Security"},
+  {q:"What is a firewall?",opts:["A type of web browser","A network security system that monitors traffic","A database management tool","A programming framework"],ans:1,diff:"medium",topic:"Security"},
+  {q:"What is phishing?",opts:["A web server injection attack","A fraudulent attempt to steal sensitive information","A database query technique","A web design method"],ans:1,diff:"medium",topic:"Security"},
+  {q:"What does VPN stand for?",opts:["Virtual Private Network","Verified Public Node","Visual Program Network","Virtual Program Node"],ans:0,diff:"easy",topic:"Security"},
+  {q:"Which is an example of two-factor authentication?",opts:["Using a strong password only","Password + OTP sent to phone","Using biometric only","Using a security question only"],ans:1,diff:"medium",topic:"Security"},
+  {q:"Which Microsoft Office application is used for spreadsheets?",opts:["MS Word","MS Excel","MS PowerPoint","MS Access"],ans:1,diff:"easy",topic:"MS Office"},
+  {q:"What is the keyboard shortcut to save a document in MS Word?",opts:["Ctrl + P","Ctrl + S","Ctrl + D","Ctrl + W"],ans:1,diff:"easy",topic:"MS Office"},
+  {q:"Which file extension is used by MS Word documents?",opts:[".xls",".ppt",".docx",".pdf"],ans:2,diff:"easy",topic:"MS Office"},
+  {q:"What does RAM stand for?",opts:["Read Access Memory","Random Access Memory","Rapid Access Module","Read And Modify"],ans:1,diff:"easy",topic:"Computer Basics"},
+  {q:"What is cloud computing?",opts:["Computing using weather data","Delivering computing services over the internet","A type of local area network","Computing using graphics cards"],ans:1,diff:"medium",topic:"Computer Basics"},
+  {q:"What is Bootstrap primarily used for?",opts:["A JavaScript backend framework","A CSS framework for responsive design","A database management tool","A server-side scripting language"],ans:1,diff:"medium",topic:"Web Technologies"},
+  {q:"What does PHP stand for?",opts:["PHP: Hypertext Preprocessor","Programming Hyper Page","Public Home Protocol","Personal Hyper Program"],ans:0,diff:"medium",topic:"Web Technologies"},
+  {q:"Which of the following is a front-end JavaScript framework?",opts:["Django","Laravel","React","PHP"],ans:2,diff:"medium",topic:"Web Technologies"},
+  {q:"What is the purpose of the &lt;meta&gt; tag in HTML?",opts:["To add images to a page","To provide metadata about the HTML document","To create navigation links","To define inline styles"],ans:1,diff:"medium",topic:"HTML"},
+  {q:"What does API stand for?",opts:["Application Programming Interface","Automated Program Integration","Application Process Interface","Advanced Programming Input"],ans:0,diff:"easy",topic:"Web Technologies"},
+  {q:"What does FTP stand for?",opts:["File Transfer Protocol","Fast Transfer Program","File Transport Process","Folder Transfer Protocol"],ans:0,diff:"easy",topic:"Networking"},
+  {q:"What is the main function of a web server?",opts:["To store and serve web content to clients","To design and style web pages","To create and manage databases","To protect networks from viruses"],ans:0,diff:"medium",topic:"Web Concepts"},
+  {q:"Which language is primarily used to style web pages?",opts:["JavaScript","PHP","CSS","Python"],ans:2,diff:"easy",topic:"CSS"},
+  {q:"What is the key difference between GET and POST HTTP methods?",opts:["GET deletes data, POST reads data","GET appends data to the URL; POST sends it in the request body","GET is always more secure than POST","There is no practical difference"],ans:1,diff:"hard",topic:"Web Technologies"},
+  {q:"Which HTML input type creates a checkbox?",opts:['&lt;input type="check"&gt;','&lt;check&gt;','&lt;input type="checkbox"&gt;','&lt;checkbox&gt;'],ans:2,diff:"easy",topic:"HTML"},
+  {q:"What does 'bandwidth' refer to in networking?",opts:["The physical size of a network cable","The maximum data transfer rate of a connection","The number of connected devices","The security level of a network"],ans:1,diff:"medium",topic:"Networking"},
+  {q:"Which best describes the core role of a Web Manager?",opts:["Managing only physical servers and hardware","Overseeing website content, performance, and security","Exclusively designing graphics for websites","Writing and deploying mobile applications only"],ans:1,diff:"easy",topic:"Web Concepts"}
+];
+
+const TOTAL=60*60;
+let current=0,timeLeft=TOTAL,timerInt=null;
+const userAns=new Array(qs.length).fill(null);
+const letters=['A','B','C','D'];
+
+function renderQuestion(){
+  const q=qs[current];
+  const answered=userAns[current]!==null;
+  let optsHtml=q.opts.map((o,i)=>{
+    let cls='opt';
+    if(answered){
+      cls+=' locked';
+      if(i===q.ans) cls+=' reveal';
+      if(i===userAns[current]&&i!==q.ans) cls+=' wrong';
+    }
+    return `<div class="${cls}" onclick="pickAnswer(${i})" id="opt-${i}">
+      <div class="opt-letter">${letters[i]}</div>
+      <div class="opt-text">${o}</div>
+    </div>`;
+  }).join('');
+  let feedback='';
+  if(answered){
+    const ok=userAns[current]===q.ans;
+    feedback=`<div class="feedback ${ok?'ok':'err'}">
+      <span class="icon">${ok?'✅':'❌'}</span>
+      ${ok?'Correct answer!':'Incorrect. The correct answer is <strong>'+letters[q.ans]+'</strong>.'}
+    </div>`;
+  }
+  document.getElementById('qCard').innerHTML=`
+    <div class="q-header">
+      <span class="q-number-badge">Q ${current+1} / ${qs.length}</span>
+      <span class="diff-pill ${q.diff}">${q.diff.charAt(0).toUpperCase()+q.diff.slice(1)}</span>
+      <span class="topic-pill">${q.topic}</span>
+    </div>
+    <div class="q-text">${q.q}</div>
+    <div class="options">${optsHtml}</div>
+    ${feedback}
+  `;
+  document.getElementById('qPos').textContent=current+1;
+  document.getElementById('btnPrev').disabled=current===0;
+  document.getElementById('btnNext').disabled=current===qs.length-1;
+  renderGrid();
+}
+
+function pickAnswer(i){
+  if(userAns[current]!==null) return;
+  userAns[current]=i;
+  updateStats();
+  renderQuestion();
+}
+
+function navigate(dir){
+  current=Math.max(0,Math.min(qs.length-1,current+dir));
+  renderQuestion();
+}
+
+function goTo(i){current=i;renderQuestion();}
+
+function renderGrid(){
+  const grid=document.getElementById('qGrid');
+  grid.innerHTML=qs.map((q,i)=>{
+    let cls='q-dot';
+    if(i===current) cls+=' current';
+    else if(userAns[i]!==null){
+      cls+=userAns[i]===q.ans?' correct':' wrong';
+    }
+    return `<div class="${cls}" onclick="goTo(${i})" title="Q${i+1}">${i+1}</div>`;
+  }).join('');
+}
+
+function updateStats(){
+  const att=userAns.filter(x=>x!==null).length;
+  const cor=userAns.reduce((s,a,i)=>s+(a===qs[i].ans?1:0),0);
+  const wrg=att-cor;
+  document.getElementById('s-att').textContent=att+' / 50';
+  document.getElementById('s-cor').textContent=cor;
+  document.getElementById('s-wrg').textContent=wrg;
+  document.getElementById('s-rem').textContent=50-att;
+  document.getElementById('s-pct').textContent=att>0?Math.round(cor/att*100)+'%':'—';
+}
+
+function showResult(){
+  clearInterval(timerInt);
+  const att=userAns.filter(x=>x!==null).length;
+  const cor=userAns.reduce((s,a,i)=>s+(a===qs[i].ans?1:0),0);
+  const wrg=att-cor;
+  const pct=Math.round(cor/50*100);
+  let grade,color;
+  if(pct>=80){grade='Excellent — Outstanding Performance';color='#0d9e75';}
+  else if(pct>=60){grade='Good — Passed';color='#2980b9';}
+  else if(pct>=30){grade='Average — Passed (Border)';color='#e67e22';}
+  else{grade='Fail — Below Pass Mark (30/50)';color='#e74c3c';}
+  document.getElementById('scorePct').textContent=pct+'%';
+  const sc=document.getElementById('scoreCircle');
+  sc.style.borderColor=color;sc.style.color=color;
+  document.getElementById('gradeRow').innerHTML=`<span style="color:${color}">${grade}</span>`;
+  document.getElementById('r-cor').textContent=cor;
+  document.getElementById('r-wrg').textContent=wrg;
+  document.getElementById('r-rem').textContent=50-att;
+  document.getElementById('r-marks').textContent=cor+' / 50';
+  document.getElementById('overlay').classList.add('active');
+}
+
+function resetExam(){
+  userAns.fill(null);current=0;
+  timeLeft=TOTAL;
+  document.getElementById('overlay').classList.remove('active');
+  document.getElementById('progressFill').style.width='100%';
+  const td=document.getElementById('timerDisplay');
+  td.className='timer-display';td.textContent='60:00';
+  updateStats();renderQuestion();startTimer();
+}
+
+function startTimer(){
+  clearInterval(timerInt);
+  timerInt=setInterval(()=>{
+    timeLeft--;
+    const m=Math.floor(timeLeft/60),s=timeLeft%60;
+    const td=document.getElementById('timerDisplay');
+    td.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    document.getElementById('progressFill').style.width=Math.round(timeLeft/TOTAL*100)+'%';
+    if(timeLeft<=300&&timeLeft>60) td.className='timer-display warn';
+    if(timeLeft<=60) td.className='timer-display danger';
+    if(timeLeft<=0){clearInterval(timerInt);showResult();}
+  },1000);
+}
+
+renderQuestion();updateStats();startTimer();
+</script>
+</body>
+</html>
