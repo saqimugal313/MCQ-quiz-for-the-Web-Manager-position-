@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Web Manager MCQ — DHO Islamabad</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;min-height:100vh;}
+
+/* ── HEADER ── */
+.top-bar{background:#1a3a5c;}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:3px solid #0d9e75;}
+.logo-area{display:flex;align-items:center;gap:14px;}
+.logo-circle{width:52px;height:52px;border-radius:50%;background:#0d9e75;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#fff;flex-shrink:0;border:2px solid rgba(255,255,255,0.3);}
+.org-info h1{font-size:17px;font-weight:700;color:#fff;line-height:1.2;}
+.org-info p{font-size:11px;color:#90b8d4;margin-top:2px;letter-spacing:0.03em;}
+.header-right{text-align:right;}
+.exam-tag{background:#0d9e75;color:#fff;font-size:11px;font-weight:600;padding:4px 10px;border-radius:4px;letter-spacing:0.05em;text-transform:uppercase;}
+.info-bar{background:#163050;display:flex;border-bottom:1px solid #1e4a6e;}
+.info-item{flex:1;padding:8px 20px;border-right:1px solid #1e4a6e;display:flex;flex-direction:column;}
+.info-item:last-child{border-right:none;}
+.info-label{font-size:10px;color:#6ea4c8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:2px;}
+.info-value{font-size:13px;color:#e8f0f8;font-weight:500;}
+
+/* ── TAB NAV ── */
+.tab-nav{background:#0d2540;display:flex;gap:0;padding:0 24px;border-bottom:2px solid #163050;}
+.tab-btn{padding:11px 24px;font-size:13px;font-weight:600;color:#6ea4c8;cursor:pointer;border:none;background:transparent;border-bottom:3px solid transparent;margin-bottom:-2px;letter-spacing:0.03em;transition:all 0.2s;}
+.tab-btn:hover{color:#b8d4e8;}
+.tab-btn.active{color:#fff;border-bottom-color:#0d9e75;}
+.tab-section{display:none;}
+.tab-section.active{display:block;}
+
+/* ── TIMER BAR ── */
+.timer-bar{background:#0d2540;padding:6px 24px;display:flex;align-items:center;justify-content:space-between;}
+.timer-label{font-size:12px;color:#6ea4c8;letter-spacing:0.04em;}
+.timer-display{font-size:22px;font-weight:700;color:#fff;font-family:'Courier New',monospace;letter-spacing:0.1em;}
+.timer-display.warn{color:#f5a623;}
+.timer-display.danger{color:#e74c3c;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
+.progress-wrap{flex:1;margin:0 20px;background:#163050;border-radius:4px;height:6px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#0d9e75,#1abc9c);border-radius:4px;transition:width 0.4s ease;}
+
+/* ── MAIN EXAM LAYOUT ── */
+.main{display:flex;flex-direction:column;gap:16px;padding:20px;max-width:1100px;margin:0 auto;}
+
+/* ── HORIZONTAL NAVIGATOR ── */
+.nav-card-h{background:#fff;border-radius:8px;border:1px solid #d5e3ef;overflow:hidden;}
+.nav-card-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:#1a3a5c;padding:8px 14px;}
+.nav-card-header .nav-title{color:#fff;font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;}
+.legend-h{display:flex;gap:14px;flex-wrap:wrap;}
+.leg-row{display:flex;align-items:center;gap:6px;font-size:11px;color:#cfe0ee;}
+.leg-box{width:13px;height:13px;border-radius:3px;flex-shrink:0;}
+.leg-box.una{background:#f7f9fb;border:1px solid #d0dde8;}
+.leg-box.cor{background:#e6f5ef;border:1px solid #0d9e75;}
+.leg-box.wrg{background:#fde8e8;border:1px solid #e74c3c;}
+.leg-box.cur{background:#0d9e75;border:1px solid #0d9e75;}
+.q-grid-h{display:flex;flex-wrap:wrap;gap:7px;padding:14px;}
+.q-dot{width:36px;height:36px;border-radius:6px;border:1px solid #d0dde8;background:#f7f9fb;font-size:12px;font-weight:600;color:#5a7a96;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;}
+.q-dot:hover{background:#e8f0f8;border-color:#6ea4c8;}
+.q-dot.current{background:#1a3a5c;color:#fff;border-color:#1a3a5c;}
+.q-dot.correct{background:#e6f5ef;color:#0d7a58;border-color:#0d9e75;}
+.q-dot.wrong{background:#fde8e8;color:#c0392b;border-color:#e74c3c;}
+
+/* ── HORIZONTAL LIVE SCORE ── */
+.score-stats-h{display:flex;gap:10px;flex-wrap:wrap;}
+.score-stats-h .ak-stat{flex:1;min-width:90px;}
+
+/* ── QUESTION CARD ── */
+.q-area{flex:1;min-width:0;}
+.q-card{background:#fff;border-radius:8px;border:1px solid #d5e3ef;padding:24px 28px;margin-bottom:16px;}
+.q-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.q-number-badge{background:#1a3a5c;color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;flex-shrink:0;}
+.diff-pill{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+.diff-pill.easy{background:#e6f5ef;color:#0d7a58;}
+.diff-pill.medium{background:#fef3e2;color:#b7580d;}
+.diff-pill.hard{background:#fde8e8;color:#c0392b;}
+.topic-pill{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;background:#eef3f9;color:#2c5f8a;}
+.q-text{font-size:16px;color:#1a2d40;line-height:1.65;font-weight:500;margin-bottom:20px;}
+.options{display:flex;flex-direction:column;gap:10px;}
+.opt{display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:7px;border:1.5px solid #d5e3ef;cursor:pointer;transition:all 0.15s;background:#fafcff;}
+.opt:hover:not(.locked){background:#eef3f9;border-color:#6ea4c8;}
+.opt-letter{width:32px;height:32px;border-radius:50%;background:#edf2f8;border:1.5px solid #c8d8ea;font-size:13px;font-weight:700;color:#3a6080;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;}
+.opt-text{font-size:14px;color:#2d4a62;line-height:1.4;flex:1;}
+.opt.correct{background:#e6f5ef;border-color:#0d9e75;}
+.opt.correct .opt-letter{background:#0d9e75;border-color:#0d9e75;color:#fff;}
+.opt.correct .opt-text{color:#0a6644;font-weight:600;}
+.opt.wrong{background:#fde8e8;border-color:#e74c3c;}
+.opt.wrong .opt-letter{background:#e74c3c;border-color:#e74c3c;color:#fff;}
+.opt.wrong .opt-text{color:#c0392b;font-weight:600;}
+.opt.reveal{background:#e6f5ef;border-color:#0d9e75;}
+.opt.reveal .opt-letter{background:#0d9e75;border-color:#0d9e75;color:#fff;}
+.opt.reveal .opt-text{color:#0a6644;font-weight:600;}
+.feedback{margin-top:14px;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.feedback.ok{background:#e6f5ef;color:#0a6644;border:1px solid #a8ddcb;}
+.feedback.err{background:#fde8e8;color:#a93226;border:1px solid #f1a9a0;}
+.nav-row{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.btn-nav{padding:10px 24px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid;transition:all 0.15s;}
+.btn-prev{background:#fff;border-color:#c8d8ea;color:#3a6080;}
+.btn-prev:hover{background:#eef3f9;}
+.btn-next{background:#1a3a5c;border-color:#1a3a5c;color:#fff;}
+.btn-next:hover{background:#163050;}
+.btn-submit{background:#0d9e75;border-color:#0d9e75;color:#fff;padding:10px 28px;}
+.btn-submit:hover{background:#0a8562;}
+.btn-nav:disabled{opacity:0.4;cursor:not-allowed;}
+.q-counter{font-size:13px;color:#5a7a96;}
+.q-counter strong{color:#1a3a5c;}
+
+/* ── RESULT MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(10,25,45,0.75);z-index:999;align-items:center;justify-content:center;}
+.overlay.active{display:flex;}
+.result-modal{background:#fff;border-radius:12px;max-width:520px;width:90%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.modal-header{background:#1a3a5c;padding:20px 28px;text-align:center;}
+.modal-header h2{color:#fff;font-size:20px;font-weight:700;}
+.modal-header p{color:#90b8d4;font-size:12px;margin-top:4px;}
+.modal-body{padding:28px;}
+.score-big{text-align:center;margin-bottom:24px;}
+.score-circle{width:110px;height:110px;border-radius:50%;margin:0 auto 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;border:5px solid;}
+.score-pct{font-size:28px;line-height:1;}
+.score-lbl{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;}
+.grade-row{text-align:center;font-size:16px;font-weight:600;margin-bottom:20px;}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.r-stat{background:#f7f9fb;border-radius:8px;padding:14px;text-align:center;border:1px solid #e0eaf4;}
+.r-stat .val{font-size:24px;font-weight:700;color:#1a3a5c;}
+.r-stat .lbl{font-size:11px;color:#7a94aa;text-transform:uppercase;letter-spacing:0.05em;margin-top:4px;}
+.r-stat .val.green{color:#0d9e75;}.r-stat .val.red{color:#e74c3c;}
+.btn-retry{display:block;width:100%;padding:13px;background:#1a3a5c;color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;}
+.btn-retry:hover{background:#163050;}
+.btn-print{display:block;width:100%;padding:13px;background:#fff;color:#1a3a5c;border:1.5px solid #c8d8ea;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;margin-top:10px;}
+.btn-print:hover{background:#eef3f9;}
+
+/* ── ANSWER KEY SECTION ── */
+.ak-wrap{max-width:1100px;margin:0 auto;padding:24px 20px;}
+.ak-header{background:#fff;border-radius:8px;border:1px solid #d5e3ef;padding:18px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:gap;}
+.ak-header-left h2{font-size:18px;font-weight:700;color:#1a3a5c;}
+.ak-header-left p{font-size:12px;color:#6a8faa;margin-top:3px;}
+.ak-filter{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.ak-filter-btn{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #d0dde8;background:#f7f9fb;color:#5a7a96;transition:all 0.15s;}
+.ak-filter-btn:hover,.ak-filter-btn.on{background:#1a3a5c;color:#fff;border-color:#1a3a5c;}
+.ak-filter-btn.easy-on{background:#0d9e75;border-color:#0d9e75;color:#fff;}
+.ak-filter-btn.medium-on{background:#e67e22;border-color:#e67e22;color:#fff;}
+.ak-filter-btn.hard-on{background:#e74c3c;border-color:#e74c3c;color:#fff;}
+.ak-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+.ak-stat{background:#fff;border:1px solid #d5e3ef;border-radius:8px;padding:10px 20px;display:flex;flex-direction:column;align-items:center;min-width:100px;}
+.ak-stat-val{font-size:22px;font-weight:700;color:#1a3a5c;}
+.ak-stat-lbl{font-size:11px;color:#7a94aa;text-transform:uppercase;letter-spacing:0.04em;margin-top:2px;}
+.ak-stat-val.g{color:#0d9e75;}.ak-stat-val.o{color:#e67e22;}.ak-stat-val.r{color:#e74c3c;}.ak-stat-val.blue{color:#2980b9;}
+.ak-q-card{background:#fff;border-radius:8px;border:1px solid #d5e3ef;padding:20px 24px;margin-bottom:14px;transition:box-shadow 0.15s;}
+.ak-q-card:hover{box-shadow:0 2px 12px rgba(26,58,92,0.08);}
+.ak-q-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.ak-q-num{background:#1a3a5c;color:#fff;font-size:11px;font-weight:700;padding:3px 11px;border-radius:20px;}
+.ak-q-text{font-size:15px;color:#1a2d40;line-height:1.6;font-weight:500;margin-bottom:14px;}
+.ak-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.ak-opt{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:7px;border:1.5px solid #e0eaf4;background:#fafcff;}
+.ak-opt-letter{width:28px;height:28px;border-radius:50%;background:#edf2f8;border:1.5px solid #c8d8ea;font-size:12px;font-weight:700;color:#3a6080;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ak-opt-text{font-size:13px;color:#2d4a62;line-height:1.3;}
+.ak-opt.ans-correct{background:#e6f5ef;border-color:#0d9e75;}
+.ak-opt.ans-correct .ak-opt-letter{background:#0d9e75;border-color:#0d9e75;color:#fff;}
+.ak-opt.ans-correct .ak-opt-text{color:#0a6644;font-weight:600;}
+.ak-answer-badge{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:7px 14px;background:#e6f5ef;border:1px solid #a8ddcb;border-radius:6px;font-size:12px;font-weight:700;color:#0a6644;}
+.ak-divider{height:1px;background:#edf2f7;margin:8px 0 14px;}
+.no-results{text-align:center;padding:40px;color:#7a94aa;font-size:15px;}
+
+/* ── TOPIC TAG COLORS ── */
+.tp-HTML{background:#e8f4fd;color:#1a6fa8;}
+.tp-CSS{background:#f0e8fd;color:#6a1a8a;}
+.tp-JavaScript{background:#fef9e2;color:#8a6a00;}
+.tp-Networking{background:#e8fdf4;color:#0a6644;}
+.tp-Database{background:#fde8e8;color:#8a1a1a;}
+.tp-Security{background:#fef0e8;color:#8a4a00;}
+.tp-Web{background:#e8eafd;color:#1a2a8a;}
+.tp-MS{background:#e8fdfa;color:#00608a;}
+.tp-Computer{background:#fde8f5;color:#8a006a;}
+
+/* ── FOOTER ── */
+.footer{background:#1a3a5c;color:#6ea4c8;text-align:center;padding:12px;font-size:11px;}
+.footer span{color:#90b8d4;}
+
+@media(max-width:768px){
+  .main{padding:12px;}
+  .info-bar{flex-wrap:wrap;}
+  .info-item{min-width:50%;}
+  .ak-opts{grid-template-columns:1fr;}
+  .header-inner{flex-wrap:wrap;gap:10px;}
+  .q-dot{width:30px;height:30px;font-size:11px;}
+  .score-stats-h .ak-stat{min-width:70px;padding:8px 10px;}
+}
+@media print{
+  .top-bar .timer-bar,.tab-nav,.nav-row,.nav-card-h,.score-stats-h,.overlay,.footer,.ak-filter,.ak-stats,.btn-retry,.btn-print{display:none!important;}
+  .main{padding:0;}
+  .q-card,.ak-q-card{page-break-inside:avoid;box-shadow:none;border:1px solid #ccc;margin-bottom:10px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="top-bar">
+  <div class="header-inner">
+    <div class="logo-area">
+      <div class="logo-circle">DHO</div>
+      <div class="org-info">
+        <h1>District Health Office — Islamabad</h1>
+        <p>Strengthening of Drug Control Section · Government of Pakistan</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="exam-tag">Online Assessment</div>
+      <p style="color:#6ea4c8;font-size:11px;margin-top:5px;">PPS-7 · Web Manager</p>
+    </div>
+  </div>
+  <div class="info-bar">
+    <div class="info-item"><span class="info-label">Post</span><span class="info-value">Web Manager</span></div>
+    <div class="info-item"><span class="info-label">Grade</span><span class="info-value">PPS-7</span></div>
+    <div class="info-item"><span class="info-label">Total Questions</span><span class="info-value">50 MCQs</span></div>
+    <div class="info-item"><span class="info-label">Total Marks</span><span class="info-value">50</span></div>
+    <div class="info-item"><span class="info-label">Duration</span><span class="info-value">60 Minutes</span></div>
+    <div class="info-item"><span class="info-label">Pass Marks</span><span class="info-value">30 / 50</span></div>
+  </div>
+</div>
+
+<!-- TAB NAV -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('exam',this)">📝 Exam Mode</button>
+  <button class="tab-btn" onclick="switchTab('qa',this)">📖 Questions &amp; Answers</button>
+</div>
+
+<!-- ════════════════════════════════ EXAM TAB ════════════════════════════════ -->
+<div class="tab-section active" id="tab-exam">
+  <!-- TIMER -->
+  <div class="timer-bar">
+    <span class="timer-label">⏱ TIME REMAINING</span>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:100%"></div></div>
+    <span class="timer-display" id="timerDisplay">60:00</span>
+  </div>
+
+  <div class="main">
+    <!-- HORIZONTAL QUESTION NAVIGATOR -->
+    <div class="nav-card-h">
+      <div class="nav-card-header">
+        <span class="nav-title">Question Navigator</span>
+        <div class="legend-h">
+          <div class="leg-row"><div class="leg-box una"></div>Not Attempted</div>
+          <div class="leg-row"><div class="leg-box cur"></div>Current</div>
+          <div class="leg-row"><div class="leg-box cor"></div>Correct</div>
+          <div class="leg-row"><div class="leg-box wrg"></div>Incorrect</div>
+        </div>
+      </div>
+      <div class="q-grid-h" id="qGrid"></div>
+    </div>
+
+    <!-- HORIZONTAL LIVE SCORE -->
+    <div class="score-stats-h">
+      <div class="ak-stat"><div class="ak-stat-val blue" id="s-att">0 / 50</div><div class="ak-stat-lbl">Attempted</div></div>
+      <div class="ak-stat"><div class="ak-stat-val g" id="s-cor">0</div><div class="ak-stat-lbl">Correct</div></div>
+      <div class="ak-stat"><div class="ak-stat-val r" id="s-wrg">0</div><div class="ak-stat-lbl">Incorrect</div></div>
+      <div class="ak-stat"><div class="ak-stat-val" id="s-rem">50</div><div class="ak-stat-lbl">Not Attempted</div></div>
+      <div class="ak-stat"><div class="ak-stat-val blue" id="s-pct">—</div><div class="ak-stat-lbl">Score %</div></div>
+    </div>
+
+    <!-- QUESTION AREA -->
+    <div class="q-area">
+      <div class="q-card" id="qCard"></div>
+      <div class="nav-row">
+        <button class="btn-nav btn-prev" id="btnPrev" onclick="navigate(-1)" disabled>◀ Previous</button>
+        <span class="q-counter">Question <strong id="qPos">1</strong> of <strong>50</strong></span>
+        <button class="btn-nav btn-next" id="btnNext" onclick="navigate(1)">Next ▶</button>
+        <button class="btn-nav btn-submit" onclick="showResult()">Submit Exam</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════ Q & A TAB ════════════════════════════ -->
+<div class="tab-section" id="tab-qa">
+  <div class="ak-wrap">
+
+    <div class="ak-header">
+      <div class="ak-header-left">
+        <h2>Questions &amp; Answer Key</h2>
+        <p>All 50 questions with correct answers highlighted in green · Web Manager PPS-7</p>
+        <div class="ak-filter" id="akFilter">
+          <button class="ak-filter-btn on" onclick="filterAK('all',this)">All (50)</button>
+          <button class="ak-filter-btn" onclick="filterAK('easy',this)">Easy</button>
+          <button class="ak-filter-btn" onclick="filterAK('medium',this)">Medium</button>
+          <button class="ak-filter-btn" onclick="filterAK('hard',this)">Hard</button>
+          <button class="ak-filter-btn" onclick="filterAK('HTML',this)">HTML</button>
+          <button class="ak-filter-btn" onclick="filterAK('CSS',this)">CSS</button>
+          <button class="ak-filter-btn" onclick="filterAK('JavaScript',this)">JavaScript</button>
+          <button class="ak-filter-btn" onclick="filterAK('Networking',this)">Networking</button>
+          <button class="ak-filter-btn" onclick="filterAK('Database',this)">Database</button>
+          <button class="ak-filter-btn" onclick="filterAK('Security',this)">Security</button>
+          <button class="ak-filter-btn" onclick="filterAK('Web Technologies',this)">Web Tech</button>
+          <button class="ak-filter-btn" onclick="filterAK('MS Office',this)">MS Office</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ak-stats">
+      <div class="ak-stat"><div class="ak-stat-val">50</div><div class="ak-stat-lbl">Total</div></div>
+      <div class="ak-stat"><div class="ak-stat-val g">29</div><div class="ak-stat-lbl">Easy</div></div>
+      <div class="ak-stat"><div class="ak-stat-val o">17</div><div class="ak-stat-lbl">Medium</div></div>
+      <div class="ak-stat"><div class="ak-stat-val r">2</div><div class="ak-stat-lbl">Hard</div></div>
+    </div>
+
+    <div id="akBody"></div>
+  </div>
+</div>
+
+<!-- RESULT MODAL -->
+<div class="overlay" id="overlay">
+  <div class="result-modal">
+    <div class="modal-header">
+      <h2>Exam Result</h2>
+      <p>Web Manager · DHO Islamabad · PPS-7</p>
+    </div>
+    <div class="modal-body">
+      <div class="score-big">
+        <div class="score-circle" id="scoreCircle">
+          <span class="score-pct" id="scorePct">0%</span>
+          <span class="score-lbl">Score</span>
+        </div>
+        <div class="grade-row" id="gradeRow"></div>
+      </div>
+      <div class="result-grid">
+        <div class="r-stat"><div class="val green" id="r-cor">0</div><div class="lbl">Correct</div></div>
+        <div class="r-stat"><div class="val red" id="r-wrg">0</div><div class="lbl">Incorrect</div></div>
+        <div class="r-stat"><div class="val" id="r-rem">0</div><div class="lbl">Not Attempted</div></div>
+        <div class="r-stat"><div class="val" id="r-marks">0 / 50</div><div class="lbl">Total Marks</div></div>
+      </div>
+      <button class="btn-retry" onclick="resetExam()">🔁 Retry Exam</button>
+      <button class="btn-print" onclick="window.print()">🖨️ Print Answer Key</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer"><span>District Health Office Islamabad</span> · Web Manager Assessment · PPS-7 · Strengthening of Drug Control Section</div>
+
+<script>
+const qs=[
+  {q:"What does HTML stand for?",opts:["Hyper Text Markup Language","High Tech Modern Language","Hyper Transfer Markup Language","Home Tool Markup Language"],ans:0,diff:"easy",topic:"HTML"},
+  {q:"Which HTML tag is used to create a hyperlink?",opts:["&lt;link&gt;","&lt;a&gt;","&lt;href&gt;","&lt;url&gt;"],ans:1,diff:"easy",topic:"HTML"},
+  {q:"What does CSS stand for?",opts:["Creative Style Sheets","Computer Style Sheets","Cascading Style Sheets","Colorful Style Sheets"],ans:2,diff:"easy",topic:"CSS"},
+  {q:"Which CSS property changes the color of text?",opts:["font-color","text-color","color","foreground-color"],ans:2,diff:"easy",topic:"CSS"},
+  {q:"Which HTML element defines the title of a document shown in the browser tab?",opts:["&lt;meta&gt;","&lt;head&gt;","&lt;title&gt;","&lt;header&gt;"],ans:2,diff:"easy",topic:"HTML"},
+  {q:"Which CSS property makes text bold?",opts:["font-style: bold","font-weight: bold","text-weight: bold","font-bold: true"],ans:1,diff:"easy",topic:"CSS"},
+  {q:"Which HTML tag defines an unordered list?",opts:["&lt;ol&gt;","&lt;ul&gt;","&lt;li&gt;","&lt;list&gt;"],ans:1,diff:"easy",topic:"HTML"},
+  {q:"Which HTML attribute provides alternate text for an image?",opts:["title","src","alt","href"],ans:2,diff:"easy",topic:"HTML"},
+  {q:"What does DOM stand for?",opts:["Document Object Model","Data Object Management","Document Oriented Module","Desktop Object Model"],ans:0,diff:"medium",topic:"JavaScript"},
+  {q:"Which JavaScript method adds an element to the end of an array?",opts:["append()","push()","add()","insert()"],ans:1,diff:"medium",topic:"JavaScript"},
+  {q:"What does JSON stand for?",opts:["JavaScript Object Notation","Java Standard Object Notation","JavaScript Oriented Naming","Java Script Online Notation"],ans:0,diff:"easy",topic:"JavaScript"},
+  {q:"What does typeof null return in JavaScript?",opts:['"null"','"undefined"','"object"','"string"'],ans:2,diff:"hard",topic:"JavaScript"},
+  {q:"Which keyword declares a block-scoped variable in modern JavaScript?",opts:["var","variable","let","dim"],ans:2,diff:"medium",topic:"JavaScript"},
+  {q:"What does HTTP stand for?",opts:["Hyper Text Transfer Protocol","High Transfer Text Protocol","Hyper Text Transport Program","Home Transfer Text Protocol"],ans:0,diff:"easy",topic:"Networking"},
+  {q:"Which protocol is used for secure data transfer over the web?",opts:["FTP","HTTP","HTTPS","SMTP"],ans:2,diff:"easy",topic:"Networking"},
+  {q:"What does DNS stand for?",opts:["Data Network System","Domain Name System","Digital Network Server","Dynamic Name Service"],ans:1,diff:"easy",topic:"Networking"},
+  {q:"Which default port number does HTTP use?",opts:["21","25","80","443"],ans:2,diff:"medium",topic:"Networking"},
+  {q:"What is an IP address?",opts:["A unique identifier for a network device","An internet browser program","A type of web browser","A programming language"],ans:0,diff:"easy",topic:"Networking"},
+  {q:"What does SQL stand for?",opts:["Structured Query Language","Simple Query Language","Standard Query Logic","System Query Language"],ans:0,diff:"easy",topic:"Database"},
+  {q:"Which SQL command retrieves data from a table?",opts:["GET","FETCH","SELECT","PULL"],ans:2,diff:"easy",topic:"Database"},
+  {q:"What is a primary key in a database?",opts:["A key to lock the database","A unique identifier for each record","The first column of any table","A foreign reference key"],ans:1,diff:"easy",topic:"Database"},
+  {q:"Which SQL clause filters records based on a condition?",opts:["ORDER BY","GROUP BY","WHERE","HAVING"],ans:2,diff:"easy",topic:"Database"},
+  {q:"What does DBMS stand for?",opts:["Database Management System","Digital Base Module System","Data Binary Management Software","Database Module Software"],ans:0,diff:"easy",topic:"Database"},
+  {q:"What does CMS stand for?",opts:["Computer Management System","Content Management System","Central Module Server","Content Module Software"],ans:1,diff:"easy",topic:"Web Concepts"},
+  {q:"Which of these is a widely used open-source CMS?",opts:["Django","WordPress","Laravel","Bootstrap"],ans:1,diff:"easy",topic:"Web Concepts"},
+  {q:"What does URL stand for?",opts:["Uniform Resource Locator","Universal Resource Link","Uniform Reference Location","Unique Resource Locator"],ans:0,diff:"easy",topic:"Web Concepts"},
+  {q:"What is responsive web design?",opts:["Design that responds to user clicks","Design that adapts to different screen sizes","Design with fast load times","Design with animations only"],ans:1,diff:"easy",topic:"Web Concepts"},
+  {q:"What does SEO stand for?",opts:["Server Engine Optimization","Search Engine Optimization","Site Engagement Output","Software Engineering Operations"],ans:1,diff:"easy",topic:"Web Concepts"},
+  {q:"What does SSL stand for?",opts:["Secure Socket Layer","Simple Security Layer","System Security Logic","Secure Server Link"],ans:0,diff:"medium",topic:"Security"},
+  {q:"What is a firewall?",opts:["A type of web browser","A network security system that monitors traffic","A database management tool","A programming framework"],ans:1,diff:"medium",topic:"Security"},
+  {q:"What is phishing?",opts:["A web server injection attack","A fraudulent attempt to steal sensitive information","A database query technique","A web design method"],ans:1,diff:"medium",topic:"Security"},
+  {q:"What does VPN stand for?",opts:["Virtual Private Network","Verified Public Node","Visual Program Network","Virtual Program Node"],ans:0,diff:"easy",topic:"Security"},
+  {q:"Which is an example of two-factor authentication?",opts:["Using a strong password only","Password + OTP sent to phone","Using biometric only","Using a security question only"],ans:1,diff:"medium",topic:"Security"},
+  {q:"Which Microsoft Office application is used for spreadsheets?",opts:["MS Word","MS Excel","MS PowerPoint","MS Access"],ans:1,diff:"easy",topic:"MS Office"},
+  {q:"What is the keyboard shortcut to save a document in MS Word?",opts:["Ctrl + P","Ctrl + S","Ctrl + D","Ctrl + W"],ans:1,diff:"easy",topic:"MS Office"},
+  {q:"Which file extension is used by MS Word documents?",opts:[".xls",".ppt",".docx",".pdf"],ans:2,diff:"easy",topic:"MS Office"},
+  {q:"What does RAM stand for?",opts:["Read Access Memory","Random Access Memory","Rapid Access Module","Read And Modify"],ans:1,diff:"easy",topic:"Computer Basics"},
+  {q:"What is cloud computing?",opts:["Computing using weather data","Delivering computing services over the internet","A type of local area network","Computing using graphics cards"],ans:1,diff:"medium",topic:"Computer Basics"},
+  {q:"What is Bootstrap primarily used for?",opts:["A JavaScript backend framework","A CSS framework for responsive design","A database management tool","A server-side scripting language"],ans:1,diff:"medium",topic:"Web Technologies"},
+  {q:"What does PHP stand for?",opts:["PHP: Hypertext Preprocessor","Programming Hyper Page","Public Home Protocol","Personal Hyper Program"],ans:0,diff:"medium",topic:"Web Technologies"},
+  {q:"Which of the following is a front-end JavaScript framework?",opts:["Django","Laravel","React","PHP"],ans:2,diff:"medium",topic:"Web Technologies"},
+  {q:"What is the purpose of the meta tag in HTML?",opts:["To add images to a page","To provide metadata about the HTML document","To create navigation links","To define inline styles"],ans:1,diff:"medium",topic:"HTML"},
+  {q:"What does API stand for?",opts:["Application Programming Interface","Automated Program Integration","Application Process Interface","Advanced Programming Input"],ans:0,diff:"easy",topic:"Web Technologies"},
+  {q:"What does FTP stand for?",opts:["File Transfer Protocol","Fast Transfer Program","File Transport Process","Folder Transfer Protocol"],ans:0,diff:"easy",topic:"Networking"},
+  {q:"What is the main function of a web server?",opts:["To store and serve web content to clients","To design and style web pages","To create and manage databases","To protect networks from viruses"],ans:0,diff:"medium",topic:"Web Concepts"},
+  {q:"Which language is primarily used to style web pages?",opts:["JavaScript","PHP","CSS","Python"],ans:2,diff:"easy",topic:"CSS"},
+  {q:"What is the key difference between GET and POST HTTP methods?",opts:["GET deletes data, POST reads data","GET appends data to the URL; POST sends it in the request body","GET is always more secure than POST","There is no practical difference"],ans:1,diff:"hard",topic:"Web Technologies"},
+  {q:"Which HTML input type creates a checkbox?",opts:['&lt;input type="check"&gt;','&lt;check&gt;','&lt;input type="checkbox"&gt;','&lt;checkbox&gt;'],ans:2,diff:"easy",topic:"HTML"},
+  {q:"What does bandwidth refer to in networking?",opts:["The physical size of a network cable","The maximum data transfer rate of a connection","The number of connected devices","The security level of a network"],ans:1,diff:"medium",topic:"Networking"},
+  {q:"Which best describes the core role of a Web Manager?",opts:["Managing only physical servers and hardware","Overseeing website content, performance, and security","Exclusively designing graphics for websites","Writing and deploying mobile applications only"],ans:1,diff:"easy",topic:"Web Concepts"}
+];
+
+/* ──── EXAM LOGIC ──── */
+const TOTAL=60*60;
+let cur=0,timeLeft=TOTAL,timerInt=null;
+const userAns=new Array(qs.length).fill(null);
+const LT=['A','B','C','D'];
+
+function renderQ(){
+  const q=qs[cur],done=userAns[cur]!==null;
+  let optsH=q.opts.map((o,i)=>{
+    let c='opt';
+    if(done){c+=' locked';if(i===q.ans)c+=' reveal';if(i===userAns[cur]&&i!==q.ans)c+=' wrong';}
+    return`<div class="${c}" onclick="pick(${i})"><div class="opt-letter">${LT[i]}</div><div class="opt-text">${o}</div></div>`;
+  }).join('');
+  let fb='';
+  if(done){const ok=userAns[cur]===q.ans;fb=`<div class="feedback ${ok?'ok':'err'}">${ok?'✅ Correct answer!':'❌ Incorrect. Correct answer: <strong>'+LT[q.ans]+'</strong>'}</div>`;}
+  document.getElementById('qCard').innerHTML=`
+    <div class="q-header">
+      <span class="q-number-badge">Q ${cur+1} / ${qs.length}</span>
+      <span class="diff-pill ${q.diff}">${q.diff[0].toUpperCase()+q.diff.slice(1)}</span>
+      <span class="topic-pill">${q.topic}</span>
+    </div>
+    <div class="q-text">${q.q}</div>
+    <div class="options">${optsH}</div>${fb}`;
+  document.getElementById('qPos').textContent=cur+1;
+  document.getElementById('btnPrev').disabled=cur===0;
+  document.getElementById('btnNext').disabled=cur===qs.length-1;
+  renderGrid();
+}
+function pick(i){if(userAns[cur]!==null)return;userAns[cur]=i;updateStats();renderQ();}
+function navigate(d){cur=Math.max(0,Math.min(qs.length-1,cur+d));renderQ();}
+function goTo(i){cur=i;renderQ();}
+function renderGrid(){
+  document.getElementById('qGrid').innerHTML=qs.map((q,i)=>{
+    let c='q-dot';
+    if(i===cur)c+=' current';
+    else if(userAns[i]!==null)c+=userAns[i]===q.ans?' correct':' wrong';
+    return`<div class="${c}" onclick="goTo(${i})">${i+1}</div>`;
+  }).join('');
+}
+function updateStats(){
+  const att=userAns.filter(x=>x!==null).length;
+  const cor=userAns.reduce((s,a,i)=>s+(a===qs[i].ans?1:0),0);
+  const wrg=att-cor;
+  document.getElementById('s-att').textContent=att+' / 50';
+  document.getElementById('s-cor').textContent=cor;
+  document.getElementById('s-wrg').textContent=wrg;
+  document.getElementById('s-rem').textContent=50-att;
+  document.getElementById('s-pct').textContent=att>0?Math.round(cor/att*100)+'%':'—';
+}
+function showResult(){
+  clearInterval(timerInt);
+  const att=userAns.filter(x=>x!==null).length;
+  const cor=userAns.reduce((s,a,i)=>s+(a===qs[i].ans?1:0),0);
+  const pct=Math.round(cor/50*100);
+  let grade,color;
+  if(pct>=80){grade='Excellent — Outstanding';color='#0d9e75';}
+  else if(pct>=60){grade='Good — Passed';color='#2980b9';}
+  else if(pct>=30){grade='Average — Passed (Border)';color='#e67e22';}
+  else{grade='Fail — Below Pass Mark (30/50)';color='#e74c3c';}
+  document.getElementById('scorePct').textContent=pct+'%';
+  const sc=document.getElementById('scoreCircle');sc.style.borderColor=color;sc.style.color=color;
+  document.getElementById('gradeRow').innerHTML=`<span style="color:${color}">${grade}</span>`;
+  document.getElementById('r-cor').textContent=cor;
+  document.getElementById('r-wrg').textContent=att-cor;
+  document.getElementById('r-rem').textContent=50-att;
+  document.getElementById('r-marks').textContent=cor+' / 50';
+  document.getElementById('overlay').classList.add('active');
+}
+function resetExam(){
+  userAns.fill(null);cur=0;timeLeft=TOTAL;
+  document.getElementById('overlay').classList.remove('active');
+  document.getElementById('progressFill').style.width='100%';
+  const td=document.getElementById('timerDisplay');td.className='timer-display';td.textContent='60:00';
+  updateStats();renderQ();startTimer();
+}
+function startTimer(){
+  clearInterval(timerInt);
+  timerInt=setInterval(()=>{
+    timeLeft--;
+    const m=Math.floor(timeLeft/60),s=timeLeft%60;
+    const td=document.getElementById('timerDisplay');
+    td.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    document.getElementById('progressFill').style.width=Math.round(timeLeft/TOTAL*100)+'%';
+    if(timeLeft<=300&&timeLeft>60)td.className='timer-display warn';
+    if(timeLeft<=60)td.className='timer-display danger';
+    if(timeLeft<=0){clearInterval(timerInt);showResult();}
+  },1000);
+}
+
+/* ──── TAB SWITCH ──── */
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='qa')renderAK('all');
+}
+
+/* ──── ANSWER KEY ──── */
+function topicClass(t){
+  if(t==='HTML')return'tp-HTML';
+  if(t==='CSS')return'tp-CSS';
+  if(t==='JavaScript')return'tp-JavaScript';
+  if(t==='Networking')return'tp-Networking';
+  if(t==='Database')return'tp-Database';
+  if(t==='Security')return'tp-Security';
+  if(t.includes('Web'))return'tp-Web';
+  if(t.includes('MS'))return'tp-MS';
+  return'tp-Computer';
+}
+let akActive='all';
+function filterAK(key,btn){
+  akActive=key;
+  document.querySelectorAll('#akFilter .ak-filter-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderAK(key);
+}
+function renderAK(filter){
+  const body=document.getElementById('akBody');
+  const filtered=qs.map((q,i)=>({...q,idx:i})).filter(q=>{
+    if(filter==='all')return true;
+    if(filter==='easy'||filter==='medium'||filter==='hard')return q.diff===filter;
+    return q.topic===filter||q.topic.includes(filter);
+  });
+  if(!filtered.length){body.innerHTML='<div class="no-results">No questions found for this filter.</div>';return;}
+  body.innerHTML=filtered.map(q=>{
+    const optsH=q.opts.map((o,i)=>{
+      const isAns=i===q.ans;
+      return`<div class="ak-opt${isAns?' ans-correct':''}">
+        <div class="ak-opt-letter">${LT[i]}</div>
+        <div class="ak-opt-text">${o}</div>
+      </div>`;
+    }).join('');
+    return`<div class="ak-q-card" data-diff="${q.diff}" data-topic="${q.topic}">
+      <div class="ak-q-header">
+        <span class="ak-q-num">Q ${q.idx+1}</span>
+        <span class="diff-pill ${q.diff}">${q.diff[0].toUpperCase()+q.diff.slice(1)}</span>
+        <span class="topic-pill ${topicClass(q.topic)}">${q.topic}</span>
+      </div>
+      <div class="ak-divider"></div>
+      <div class="ak-q-text">${q.q}</div>
+      <div class="ak-opts">${optsH}</div>
+      <div class="ak-answer-badge">✅ Correct Answer: <strong>${LT[q.ans]}. ${q.opts[q.ans]}</strong></div>
+    </div>`;
+  }).join('');
+}
+
+renderQ();updateStats();startTimer();
+</script>
+</body>
+</html>
